@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="trace1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/test-results/example-has-title-chromium/trace.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
