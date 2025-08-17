@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import * as dotenv from 'dotenv';
-import { getPassword, getRandomUser } from './commonFunc/common_helper';
+import { getPassword, getRandomUser } from '../commonFunc/common_helper';
 
 // Confirm that the user can log in successfully using valid credentials.
 
