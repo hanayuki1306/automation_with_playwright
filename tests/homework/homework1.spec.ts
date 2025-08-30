@@ -82,6 +82,6 @@ test.describe('SauceDemo - Basic E2E tests', () => {
         await page.click('.bm-burger-button');
         await page.click('#logout_sidebar_link');
         await expect(page).toHaveURL('https://www.saucedemo.com/');
-        await page.pause(); 
+        // await page.pause(); 
     });
 });
