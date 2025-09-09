@@ -16,11 +16,36 @@ test.describe("Homework 2 - API Booking", () => {
 
     let bookingIds: number[] = [];
     let adminToken: string;
+    let bookingId: string;
+    let token: string;
 
-    test.beforeEach(async ({ request }) => {
-        const response = await request.get('https://restful-booker.herokuapp.com/booking');
-        const data = await response.json();
-        bookingIds = data.map((booking: { bookingid: any; }) => booking.bookingid);
+    test.beforeAll(async ({ request }) => {
+        // Tạo booking mới
+        const newBooking = {
+            firstname: "Nguyen",
+            lastname: "Phi Son",
+            totalprice: 150,
+            depositpaid: true,
+            bookingdates: {
+                checkin: "2023-10-01",
+                checkout: "2023-10-10"
+            },
+            additionalneeds: "Breakfast"
+        };
+        const bookingRes = await request.post('https://restful-booker.herokuapp.com/booking', {
+            data: newBooking,
+            headers: { 'Content-Type': 'application/json' }
+        });
+        const bookingData = await bookingRes.json();
+        bookingId = bookingData.bookingid.toString();
+        // Lấy token
+        const credentials = { username: "admin", password: "password123" };
+        const authRes = await request.post('https://restful-booker.herokuapp.com/auth', {
+            data: credentials,
+            headers: { 'Content-Type': 'application/json' }
+        });
+        const authData = await authRes.json();
+        token = authData.token;
     });
 
     test("Level 1: GET /booking - should return a list of all bookings", async ({ request }) => {
@@ -33,6 +58,10 @@ test.describe("Homework 2 - API Booking", () => {
 
 
     test("Level 1: GET /booking/:id - should return details of a random booking", async ({ request }) => {
+        // Lấy danh sách bookingIds trực tiếp trong test
+        const listResponse = await request.get('https://restful-booker.herokuapp.com/booking');
+        const listData = await listResponse.json();
+        const bookingIds = listData.map((booking: { bookingid: any; }) => booking.bookingid);
         let bookingId = getRandomBookingId(bookingIds);
         console.log("Random booking ID: " + bookingId);
 
@@ -148,14 +177,6 @@ test.describe("Homework 2 - API Booking", () => {
     // → Include auth token, then try fetching it again (should return 404).
 
     test("Level 3: PUT /booking/:id - should update an existing booking", async ({ request }) => {
-        const bookingId = process.env.BOOKING_ID;
-        const token = process.env.ADMIN_TOKEN;
-
-        if (!bookingId || !token) {
-            console.log("Booking ID or Admin Token is not set. Please run all scenarior test level 2 first.");
-            return;
-        }
-
         const updatedBooking = {
             firstname: "son",
             lastname: "nguyen phi",
@@ -167,7 +188,6 @@ test.describe("Homework 2 - API Booking", () => {
             },
             additionalneeds: "Late Checkout"
         };
-
         const response = await request.put(`https://restful-booker.herokuapp.com/booking/${bookingId}`, {
             data: updatedBooking,
             headers: {
@@ -175,28 +195,15 @@ test.describe("Homework 2 - API Booking", () => {
                 'Cookie': `token=${token}`
             }
         });
-
         console.log("Update booking status: " + response.status());
-        expect(response.status()).toBe(200); // Expecting 200 OK for successful update
-
+        expect(response.status()).toBe(200);
         const data = await response.json();
-        console.log(data); // Log the response data
-        expect(data).toMatchObject(updatedBooking); // Verify the updated booking matches the input
+        console.log(data);
+        expect(data).toMatchObject(updatedBooking);
     });
 
     test("Level 3: PATCH /booking/:id - should partially update an existing booking", async ({ request }) => {
-        const bookingId = process.env.BOOKING_ID;
-        const token = process.env.ADMIN_TOKEN;
-
-        if (!bookingId || !token) {
-            console.log("Booking ID or Admin Token is not set. Run test level 2 first.");
-            return;
-        }
-
-        const partialUpdate = {
-            depositpaid: true
-        };
-
+        const partialUpdate = { depositpaid: true };
         const response = await request.patch(`https://restful-booker.herokuapp.com/booking/${bookingId}`, {
             data: partialUpdate,
             headers: {
@@ -204,38 +211,24 @@ test.describe("Homework 2 - API Booking", () => {
                 'Cookie': `token=${token}`
             }
         });
-
         console.log("Partial update booking status: " + response.status());
-        expect(response.status()).toBe(200); // Expecting 200 OK for successful partial update
-
+        expect(response.status()).toBe(200);
         const data = await response.json();
-        console.log(data); // Log the response data
-        expect(data.depositpaid).toBe(true); // Verify the depositpaid field is updated
+        console.log(data);
+        expect(data.depositpaid).toBe(true);
     });
 
     test("Level 3: DELETE /booking/:id - should delete an existing booking", async ({ request }) => {
-        const bookingId = process.env.BOOKING_ID;
-        const token = process.env.ADMIN_TOKEN;
-
-        if (!bookingId || !token) {
-            console.log("Booking ID or Admin Token is not set. Run test level 2 first.");
-            return;
-        }
-
         const response = await request.delete(`https://restful-booker.herokuapp.com/booking/${bookingId}`, {
-            headers: {
-                'Cookie': `token=${token}`
-            }
+            headers: { 'Cookie': `token=${token}` }
         });
-
         console.log("Delete booking status: " + response.status());
-        expect(response.status()).toBe(201); // Expecting 201 Created for successful deletion
+        expect(response.status()).toBe(201);
         console.log("Booking ID " + bookingId + " deleted successfully.");
-
         // Verify the booking is deleted by trying to fetch it again
         const getResponse = await request.get(`https://restful-booker.herokuapp.com/booking/${bookingId}`);
         console.log("Get deleted booking status: " + getResponse.status());
-        expect(getResponse.status()).toBe(404); // Expecting 404 Not Found for deleted booking
+        expect(getResponse.status()).toBe(404);
         console.log("Verified booking ID " + bookingId + " is deleted.");
     });
 
@@ -282,16 +275,9 @@ test.describe("Homework 2 - API Booking", () => {
     });
 
     test("Level 4: DELETE /booking/:id - should return 403 when deleting a booking without authentication", async ({ request }) => {
-        const bookingId = process.env.BOOKING_ID;
-
-        if (!bookingId) {
-            console.log("Booking ID is not set. Run test level 2 first.");
-            return;
-        }
-
         const response = await request.delete(`https://restful-booker.herokuapp.com/booking/${bookingId}`);
         console.log("Delete booking without auth status: " + response.status());
-        expect(response.status()).toBe(403); // Expecting 403 Forbidden for unauthenticated delete
+        expect(response.status()).toBe(403);
     });
 
 });
