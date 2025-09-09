@@ -42,8 +42,6 @@ build/
 
 # dotenv files (keep only example)
 .env
-.env.*
-!.env.example
 
 # Cache folders
 .cache/
