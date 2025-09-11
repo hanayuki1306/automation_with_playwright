@@ -4,12 +4,12 @@ export class InventoryPage {
   constructor(private page: Page) {}
 
   async addToCart(productName: string) {
+    console.log(`[InventoryPage] addToCart: ${productName}`);
     await this.page.click(`.inventory_item:has-text("${productName}") button`);
-    await this.page.waitForTimeout(2000);
   }
 
   async goToCart() {
+    console.log('[InventoryPage] goToCart');
     await this.page.click('.shopping_cart_link');
-    await this.page.waitForTimeout(2000);
   }
 }
