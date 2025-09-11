@@ -8,11 +8,9 @@ export class CheckoutPage {
     await this.page.fill('[data-test="lastName"]', lastName);
     await this.page.fill('[data-test="postalCode"]', zip);
     await this.page.click('[data-test="continue"]');
-    await this.page.waitForTimeout(2000);
   }
 
   async finishCheckout() {
     await this.page.click('[data-test="finish"]');
-    await this.page.waitForTimeout(2000);
   }
 }

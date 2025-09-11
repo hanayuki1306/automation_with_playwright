@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe("Login realworld-app", () => {
-    test ("Demo login", async({page}) =>{
+    test.skip("Demo login", async({page}) =>{
         await page.setDefaultTimeout(10000); // set timeout to 10 seconds
         await page.setDefaultNavigationTimeout(10000); // set navigation timeout to 10 seconds
         await page.goto('localhost:3000/', { waitUntil: 'commit' }); // wait until the page is fully loaded

@@ -44,7 +44,7 @@ test('SauceDemo E2E: Purchase flow with POM', async ({ page }) => {
   await inventoryPage.goToCart();
   await cartPage.verifyProductInCart('Sauce Labs Backpack');
   await cartPage.proceedToCheckout();
-  await checkoutPage.fillCheckoutInfo('Son', 'NguyenPhi', '12345');
+  await checkoutPage.fillCheckoutInfo('John', 'Doe', '12345');
   await checkoutPage.finishCheckout();
   await confirmationPage.verifyOrderSuccess();
 });
