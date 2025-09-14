@@ -47,4 +47,5 @@ test('SauceDemo E2E: Purchase flow with POM', async ({ page }) => {
   await checkoutPage.fillCheckoutInfo('John', 'Doe', '12345');
   await checkoutPage.finishCheckout();
   await confirmationPage.verifyOrderSuccess();
+  console.log('E2E Purchase flow with POM - passed');
 });
