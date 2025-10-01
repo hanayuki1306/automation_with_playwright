@@ -5,11 +5,34 @@ import { LoginPage } from '../../pageObjects/ae/LoginPage';
 import { ProductsPage } from '../../pageObjects/ae/ProductsPage';
 import { CartPage } from '../../pageObjects/ae/CartPage';
 
-test.describe('AutomationExercise - E-commerce Workflow with POM', () => {
+test.describe('AutomationExercise - Basic Shopping Workflow with POM', () => {
+  /*
+    Testcase 1.1 - Register a new user:
+      - Navigate to signup page
+      - Fill in user details and submit
+      - Assert successful registration message
+
+    Testcase 1.2 - Login with valid credentials:
+      - Navigate to login page
+      - Enter credentials and submit
+      - Assert that user is logged in
+
+    Testcase 1.3 - Search and add product to cart:
+      - Search for a product
+      - Add it to the cart
+      - Assert that the cart contains the product
+
+    Testcase 1.4 - Checkout process:
+      - Proceed to checkout
+      - Fill in address and payment details
+      - Assert order confirmation message
+  */
+
   test.beforeEach(async ({ loginIfNeeded }) => {
     await loginIfNeeded();
   });
-  test('Register a new user', async ({ page }) => {
+  // Testcase 1.1 - Register a new user
+  test('Testcase 1.1 - Register a new user', async ({ page }) => {
     const home = new HomePage(page);
     const signup = new SignupPage(page);
 
@@ -23,21 +46,22 @@ test.describe('AutomationExercise - E-commerce Workflow with POM', () => {
     await expect(page.getByText(/Congratulations! Your new account has been successfully created!/i)).toBeVisible();
   });
 
-  test('Login with valid credentials', async ({ page }) => {
+  // Testcase 1.2 - Login with valid credentials
+  test('Testcase 1.2 - Login with valid credentials', async ({ page }) => {
     const home = new HomePage(page);
     const login = new LoginPage(page);
 
     await home.goto();
     await home.navigateToSignupLogin();
 
-    // Use credentials if account exists; otherwise this will fail. Prefer creating once and reusing in CI via env.
-    const email = process.env.AE_EMAIL || 'user@example.com';
-    const password = process.env.AE_PASSWORD || 'Password123!';
+    const email = process.env.AE_EMAIL || 'daninho@gmail.com';
+    const password = process.env.AE_PASSWORD || '123123';
     await login.login(email, password);
     await login.assertLoggedIn();
   });
 
-  test('Search and add product to cart', async ({ page }) => {
+  // Testcase 1.3 - Search and add product to cart
+  test('Testcase 1.3 - Search and add product to cart', async ({ page }) => {
     const home = new HomePage(page);
     const products = new ProductsPage(page);
     const cart = new CartPage(page);
@@ -46,13 +70,15 @@ test.describe('AutomationExercise - E-commerce Workflow with POM', () => {
     await home.navigateToProducts();
     await products.assertOnPage();
     await products.search('dress');
+    await page.waitForTimeout(1000);
     await products.addFirstResultToCart();
 
     await home.navigateToCart();
     await cart.assertProductInCart('dress');
   });
 
-  test('Checkout process', async ({ page }) => {
+  // Testcase 1.4 - Checkout process
+  test('Testcase 1.4 - Checkout process', async ({ page }) => {
     const home = new HomePage(page);
     const products = new ProductsPage(page);
     const cart = new CartPage(page);

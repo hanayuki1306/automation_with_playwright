@@ -1,4 +1,5 @@
 import { Page, expect } from '@playwright/test';
+import { time } from 'console';
 
 export class ProductsPage {
   constructor(private page: Page) {}
@@ -7,10 +8,12 @@ export class ProductsPage {
     return this.page.getByPlaceholder('Search Product');
   }
   private get searchButton() {
-    return this.page.getByRole('button', { name: /Search/i });
+    return this.page.locator("//button[@id='submit_search']");
   }
   private get firstResultAddButton() {
-    return this.page.locator('.product-overlay button').first();
+    return this.page.locator("(//a[@class='btn btn-default add-to-cart'][normalize-space()='Add to cart'])[2]");
+    // return this.page.locator("//a[@class='btn btn-default add-to-cart'][normalize-space()='Add to cart']").first();
+    // return this.page.locator('//button[@class="btn btn-default cart"]')
   }
 
   async assertOnPage() {
@@ -22,6 +25,7 @@ export class ProductsPage {
   async search(keyword: string) {
     console.log(`[ProductsPage] search: ${keyword}`);
     await this.searchInput.fill(keyword);
+    await this.page.waitForTimeout(500)
     await this.searchButton.click();
     console.log('[ProductsPage] search success');
   }
@@ -29,6 +33,7 @@ export class ProductsPage {
   async addFirstResultToCart() {
     console.log('[ProductsPage] addFirstResultToCart');
     await this.firstResultAddButton.click();
+    await this.page.waitForTimeout(1000);
     console.log('[ProductsPage] addFirstResultToCart success');
   }
 }

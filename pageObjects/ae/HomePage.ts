@@ -1,7 +1,7 @@
 import { Page, Locator, expect } from '@playwright/test';
 
 export class HomePage {
-  constructor(private page: Page) {}
+  constructor(private page: Page) { }
 
   private get productsLink(): Locator {
     return this.page.getByRole('link', { name: 'Products' });
@@ -13,7 +13,11 @@ export class HomePage {
     return this.page.locator('#header').getByText(/Logged in as/i);
   }
   private get cartLink(): Locator {
-    return this.page.getByRole('link', { name: /^Cart$/i });
+    // return this.page.locator('.shop-menu').getByRole('link', { name: 'Cart' });
+    return this.page.getByRole('link', { name: 'Cart' }).first();
+  }
+  private get addToCartPopup(): Locator {
+    return this.page.locator('.modal-content:has-text("Your product has been added to cart")');
   }
 
   async goto(): Promise<void> {
@@ -39,8 +43,9 @@ export class HomePage {
 
   async navigateToCart(): Promise<void> {
     console.log('[HomePage] navigateToCart');
+    await expect(this.cartLink).toBeVisible();
     await this.cartLink.click();
-    await expect(this.page).toHaveURL(/.*\/view_cart/);
+    await expect(this.page).toHaveURL(/view_cart$/);
     console.log('[HomePage] navigateToCart success');
   }
 }

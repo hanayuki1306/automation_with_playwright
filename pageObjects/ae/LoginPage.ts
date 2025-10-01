@@ -1,7 +1,7 @@
 import { Page, expect } from '@playwright/test';
 
 export class LoginPage {
-  constructor(private page: Page) {}
+  constructor(private page: Page) { }
 
   private get emailInput() {
     return this.page.locator('form').filter({ hasText: 'Login' }).getByPlaceholder('Email Address');
@@ -24,7 +24,9 @@ export class LoginPage {
     await expect(this.emailInput).toBeVisible();
     await expect(this.passwordInput).toBeVisible();
     await this.emailInput.fill(email);
+    await this.page.waitForTimeout(500); // add small delay
     await this.passwordInput.fill(password);
+    await this.page.waitForTimeout(500);
     await this.loginButton.click();
     console.log('[LoginPage] login success');
   }
