@@ -7,9 +7,7 @@ export class CartPage {
     return this.page.locator('.cart_description h4 a');
   }
   private get checkoutButton() {
-    return this.page.getByRole('button', { name: /Proceed To Checkout/i }).or(
-      this.page.getByRole('link', { name: /Proceed To Checkout/i })
-    );
+    return this.page.getByText('Proceed To Checkout');
   }
   private get addToCartPopup() {
     return this.page.locator('.modal-content, .alert-success');

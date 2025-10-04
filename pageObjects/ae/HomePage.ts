@@ -13,8 +13,9 @@ export class HomePage {
     return this.page.locator('#header').getByText(/Logged in as/i);
   }
   private get cartLink(): Locator {
+    return this.page.getByRole('link', { name: 'View Cart' })
     // return this.page.locator('.shop-menu').getByRole('link', { name: 'Cart' });
-    return this.page.getByRole('link', { name: 'Cart' }).first();
+    // return this.page.getByRole('link', { name: 'Cart' }).first();
   }
   private get addToCartPopup(): Locator {
     return this.page.locator('.modal-content:has-text("Your product has been added to cart")');

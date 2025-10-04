@@ -89,8 +89,8 @@ test.describe('AutomationExercise - Basic Shopping Workflow with POM', () => {
     // Ensure logged in - if env provided
     if (!(await page.getByText(/Logged in as/i).isVisible().catch(() => false))) {
       await home.navigateToSignupLogin();
-      const email = process.env.AE_EMAIL || 'user@example.com';
-      const password = process.env.AE_PASSWORD || 'Password123!';
+      const email = process.env.AE_EMAIL || 'daninho@gmail.com';
+      const password = process.env.AE_PASSWORD || '123123';
       await login.login(email, password);
       await login.assertLoggedIn();
     }
@@ -105,17 +105,19 @@ test.describe('AutomationExercise - Basic Shopping Workflow with POM', () => {
     const comment = page.locator("textarea[name='message']");
     if (await comment.isVisible()) {
       await comment.fill('Please deliver ASAP');
-      await page.getByRole('link', { name: /Place Order/i }).click();
+      await page.getByRole('link', { name: 'Place Order' }).click();
     }
 
-    await page.locator('#name_on_card').fill('Test User');
-    await page.locator('#card_number').fill('4242424242424242');
-    await page.locator('#cvc').fill('123');
-    await page.locator('#expiry_month').fill('12');
-    await page.locator('#expiry_year').fill('2030');
-    await page.getByRole('button', { name: /Pay and Confirm Order/i }).click();
-
-    await expect(page.getByText(/Your order has been placed successfully!/i)).toBeVisible({ timeout: 15000 });
+    await page.waitForTimeout(1000);
+    await page.locator('input[name="name_on_card"]').fill('DANI TEST USER');
+    await page.locator('input[name="card_number"]').fill('4242424242424242');
+    await page.getByRole('textbox', { name: 'ex.' }).fill('123');
+    await page.getByRole('textbox', { name: 'MM' }).fill('12');
+    await page.getByRole('textbox', { name: 'YYYY' }).fill('2030');
+    await page.getByRole('button', { name: 'Pay and Confirm Order' }).click();
+    await page.waitForTimeout(1000);
+    // await page.pause();
+    await expect(page.getByText('Congratulations! Your order has been confirmed!')).toBeVisible({ timeout: 15000 });
   });
 });
 
